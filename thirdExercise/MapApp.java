@@ -9,53 +9,80 @@ import java.util.Map;
 
 public class MapApp {
 	public static void main(String[] args) throws IOException {
-		Map<String, String> player = readFile("PokerHands.csv");
-
+		Map<String, Integer> player = readFile("PokerHands.csv");
+		printMap(player);
+		updateKey(player,"Rita Repulsa","Zordon");
+		printMap(player);
+		updateValue(player,"He Man", 1);
+		printMap(player);
+		removeItem(player, "He Man");
+		printMap(player);
 	}
 
-	private static void printMap(Map<String, String> player, int counter) {
-		for(Map.Entry<String, String> players : player.entrySet()) {
-			System.out.println(players.getKey() + counter);
+	private static void printMap(Map<String, Integer> player) {
+		for (Map.Entry<String, Integer> players : player.entrySet()) {
+			System.out.println(players.getKey() + players.getValue());
 		}
+		System.out.println("-----");
 	}
-	
-	 public static Map<String, String> readFile(String fileName) throws IOException{
+
+	public static Map<String, Integer> readFile(String fileName) throws IOException {
 		BufferedReader br = null;
 		String line;
-		Map<String, String> player = new HashMap<String, String>();
-		Integer counter = Integer.valueOf(1);
+		String flush = "FLUSH";
+		Map<String, Integer> player = new HashMap<>();
 		try {
 			br = new BufferedReader(new FileReader(fileName));
 			br.readLine();
-			while((line = br.readLine())!= null) {
+			while ((line = br.readLine()) != null) {
 				String[] values = line.split(",");
-				String key = values[0];
-				String value = values[1];
-				if(player.containsKey(key)) {
-					counter = player.get(key) + 1;
+				String name = values[0];
+				String hand = values[1];
+				if (hand.equals(flush)) {
+					if (player.containsKey(name)) {
+						int count = player.get(name);
+						player.put(name, count + 1);
+					} else {
+						player.put(name, 1);
+					}
 				}
-				player.put(key,value);			
 			}
-		}finally {
-//			printMap(player, counter);
+		} finally {
 			br.close();
 		}
-		
+
 		return player;
-		
-	}
-	public static void updateKey() {
-		
-	}
-	public static void print() {
-		
-	}
-	public static void updateValue() {
-		
-	}
-	public static void removeItem() {
-		
+
 	}
 
+	public static void updateKey(Map<String,Integer>player, String oldName,String newName) {
+		Integer hand = null;
+		for(Map.Entry<String, Integer> players : player.entrySet()) {
+			if(players.getKey().equals(oldName)) {
+				hand = players.getValue();
+			}
+		}
+		player.put(newName, hand);
+		player.remove(oldName);
+	}
+
+	public static void updateValue(Map<String,Integer> player,String name,int value) {
+		int hand ;
+		for(Map.Entry<String, Integer> players : player.entrySet()) {
+			if(players.getKey().equals(name)) {
+				hand = players.getValue() + value;
+				player.put(name, hand);			
+			}
+		}
+
+	}
+
+	public static void removeItem(Map<String,Integer> player, String name) {
+		for(Map.Entry<String, Integer> players : player.entrySet()) {
+			if(players.getKey().equals(name)) {
+				player.remove(name);
+			}
+		}
+	}
 
 }
